@@ -1,7 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.fadin.mynote.MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
@@ -17,19 +17,26 @@
         android:icon="@mipmap/refresh"
         />
     <item
-        android:id="@+id/action_search"
-        android:orderInCategory="300"
-        app:showAsAction="always"
-        android:title=""
-        android:icon="@mipmap/search"
-        />
-    <item
-        android:id="@+id/action_bin"
-        android:orderInCategory="400"
+        android:id="@+id/action_delete"
+        android:orderInCategory="500"
         app:showAsAction="always"
         android:title=""
         android:icon="@mipmap/bin"
-        android:visible="false"
         />
 
+   <item
+       android:id="@+id/action_return"
+       android:orderInCategory="300"
+       app:showAsAction="always"
+       android:title=""
+       android:icon="@mipmap/return0"
+       />
+
+    <item
+        android:id="@+id/action_return_2"
+        android:orderInCategory="400"
+        app:showAsAction="always"
+        android:title=""
+        android:icon="@mipmap/return1"
+        />
 </menu>

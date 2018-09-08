@@ -19,6 +19,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SubareaActivity"
+            android:label="@string/title_activity_subarea"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NoteActivity"
+            android:label="@string/title_activity_note"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AddnoteActivity"
+            android:label="@string/title_activity_addnote"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -91,4 +91,8 @@
     </string>
     <string name="action_settings">设置</string>
     <string name="action_refresh">刷新</string>
+    <string name="title_activity_add">AddActivity</string>
+    <string name="title_activity_subarea">SubareaActivity</string>
+    <string name="title_activity_note">NoteActivity</string>
+    <string name="title_activity_addnote">Addnote</string>
 </resources>

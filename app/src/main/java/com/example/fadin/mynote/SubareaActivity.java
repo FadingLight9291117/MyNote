@@ -14,10 +14,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.View;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -31,9 +31,9 @@ import android.widget.Toast;
 
 import java.lang.reflect.Method;
 
-import static android.media.CamcorderProfile.get;
-
-public class MainActivity extends AppCompatActivity {
+public class SubareaActivity extends AppCompatActivity {
+    private int notebook_id;
+    private String notebook_name;
     private ListView listView;
     private MySQL mySQL;
     private SQLiteDatabase db;
@@ -43,16 +43,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_subarea);
+
+        Intent intent=getIntent();
+        Bundle bundle=intent.getExtras();
+        notebook_id =bundle.getInt("_id");
+        notebook_name =bundle.getString("name");
+        /*设置toolbar*/
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(notebook_name);
         setSupportActionBar(toolbar);
+        /*toolbar.setNavigationIcon(R.mipmap.return0);*/
+        /*左侧添加一个默认的返回图标*/
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        /*设置返回键可用*/
+        getSupportActionBar().setHomeButtonEnabled(true);
+
 
         showListview();
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_main);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog_notebook();
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+                showDialog_subarea();
             }
         });
     }
@@ -89,6 +104,11 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        /*为toorbar返回箭头添加监听事件*/
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
         if (id == R.id.action_settings) {
             return true;
         }
@@ -100,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)  {
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         /*获取当长按ListView的时候对应item的positon*/
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
@@ -116,19 +136,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        Cursor cursor=simpleCursorAdapter.getCursor();
+        Cursor cursor = simpleCursorAdapter.getCursor();
         cursor.moveToPosition(item_id);
         final int _id=cursor.getInt(cursor.getColumnIndex("_id"));
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_delete:
-                AlertDialog.Builder builder=new AlertDialog.Builder(this);
-                builder.setTitle("要删除笔记本吗？")
-                        .setMessage("一旦删除，您将无法恢复此笔记本")
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("要删除分区吗？")
+                        .setMessage("一旦删除，您将无法恢复此分区")
                         .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                Cursor cursor = simpleCursorAdapter.getCursor();
+                                cursor.moveToPosition(item_id);
                                 deleteData(_id);
-                                Toast.makeText(getApplicationContext(),"删除成功",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "删除成功", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -139,37 +161,37 @@ public class MainActivity extends AppCompatActivity {
                         });
                 builder.create().show();
                 break;
-            case  R.id.menu_edit:
+            case R.id.menu_edit:
                 showDialog_notebook_rename(_id);
                 break;
         }
         return super.onContextItemSelected(item);
     }
 
-    /*将数据库中的notebook表中的数据显示在listview中*/
+    /*将数据库中的subarea表中的数据显示在listview中*/
     private void showListview(){
-        listView=findViewById(R.id.main_listview);
+        listView=findViewById(R.id.subarea_listview);
         mySQL=new MySQL(getApplicationContext(),"mynote.db",null,1);
         db=mySQL.getReadableDatabase();
         String[] from=new String[]{"name"};
-        int[] to=new int[]{R.id.listview_main_textview};
-        simpleCursorAdapter=new SimpleCursorAdapter(this,R.layout.listview_main,null,from,to);
+        int[] to=new int[]{R.id.listview_subarea_tv};
+        simpleCursorAdapter=new SimpleCursorAdapter(this,R.layout.listview_subarea,null,from,to);
         listView.setAdapter(simpleCursorAdapter);
         refreshListview();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*获取点击list在数据库中所对应的id并传入下一个activity*/
-                Intent intent=new Intent(MainActivity.this,SubareaActivity.class);
+                Intent intent=new Intent(SubareaActivity.this,NoteActivity.class);
                 Bundle bundle=new Bundle();
                 Cursor mcursor=simpleCursorAdapter.getCursor();
                 /*移动cursor光标到该item所对应的下标position*/
                 mcursor.moveToPosition(position);
                 /*获取对应数据项的id*/
                 int _id=mcursor.getInt(mcursor.getColumnIndex("_id"));
-                TextView textView=view.findViewById(R.id.listview_main_textview);
+                TextView textView=view.findViewById(R.id.listview_subarea_tv);
                 /*将id传入下一个activity*/
                 bundle.putInt("_id",_id);
+                bundle.putString("notebook_name",notebook_name);
                 bundle.putString("name",textView.getText().toString());
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -178,41 +200,12 @@ public class MainActivity extends AppCompatActivity {
         this.registerForContextMenu(listView);
     }
 
-    /**
-     问题描述：
-     1)  在android.support.v4.widget.NestedScrollView中直接嵌套ListView时出现的情况：listview显示不全只有一行或者两行。
-     2) 如果listview的item中有根据id选择选项会导致选择错乱，如果listview中包含有switch控件，
-     用来对该item是否可用进行判断，但是现在冲突导致的listview中位置错乱。
-     2.解决方法：   计算出每一个item的高度，此方法用在listview.setAdapter()后。
-     */
-
-    /*d动态设置listview高度*/
-    public void setListViewHeight(ListView listView) {
-        //获取listView的adapter
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null) {
-            return;
-        }
-        int totalHeight = 0;
-        //listAdapter.getCount()返回数据项的数目
-        for (int i = 0,len = listAdapter.getCount(); i < len; i++) {
-            View listItem = listAdapter.getView(i, null, listView);
-            listItem.measure(0, 0);
-            totalHeight += listItem.getMeasuredHeight();
-        }
-        // listView.getDividerHeight()获取子项间分隔符占用的高度
-        // params.height最后得到整个ListView完整显示需要的高度
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() *  (listAdapter .getCount() - 1));
-        listView.setLayoutParams(params);
-    }
-
     /*显示弹出添加输入框*/
-    private void showDialog_notebook(){
+    private void showDialog_subarea(){
         LayoutInflater inflater=LayoutInflater.from(this);
         View view=inflater.inflate(R.layout.dialog_main,null);
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setTitle("新建笔记本");
+        builder.setTitle("新建分区");
         builder.setView(view);
         final AlertDialog dialog=builder.create();
         dialog.show();
@@ -233,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
         /*注意获取dialog中layout控件时findViewById前要加dialog.*/
         final Button button=dialog.findViewById(R.id.dialog_ok);
         final EditText editText=dialog.findViewById(R.id.dialog_et);
+        editText.setHint("分区名称");
         /*设置button不可点击*/
         button.setEnabled(false) ;
         /*设置button文本颜色*/
@@ -276,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater=LayoutInflater.from(this);
         View view=inflater.inflate(R.layout.dialog_main,null);
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setTitle("重命名笔记本");
+        builder.setTitle("重命名分区");
         builder.setView(view);
         final AlertDialog dialog=builder.create();
         dialog.show();
@@ -284,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
         /*设置dialog中的editext中 文本 为原名*/
         mySQL=new MySQL(getApplicationContext(),"mynote.db",null,1);
         db=mySQL.getWritableDatabase();
-        Cursor cursor=db.rawQuery("select name from notebook where _id=?",new String[]{_id+""});
+        Cursor cursor=db.rawQuery("select name from subarea where _id=?",new String[]{_id+""});
         cursor.moveToFirst();
         String name= cursor.getString(cursor.getColumnIndex("name"));
         ((EditText)dialog.findViewById(R.id.dialog_et)).setText(name);
@@ -346,9 +340,30 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*d动态设置listview高度*/
+    public void setListViewHeight(ListView listView) {
+        //获取listView的adapter
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            return;
+        }
+        int totalHeight = 0;
+        //listAdapter.getCount()返回数据项的数目
+        for (int i = 0,len = listAdapter.getCount(); i < len; i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+        // listView.getDividerHeight()获取子项间分隔符占用的高度
+        // params.height最后得到整个ListView完整显示需要的高度
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() *  (listAdapter .getCount() - 1));
+        listView.setLayoutParams(params);
+    }
+
     /*刷新数据列表*/
     private void refreshListview(){
-        Cursor Cursor = db.rawQuery("select * from notebook",null);
+        Cursor Cursor = db.rawQuery("select * from subarea where notebook_id="+ notebook_id,null);
         simpleCursorAdapter.changeCursor(Cursor);
         setListViewHeight(listView);
     }
@@ -357,28 +372,19 @@ public class MainActivity extends AppCompatActivity {
     private void insertData(String name){
         mySQL=new MySQL(getApplicationContext(),"mynote.db",null,1);
         db=mySQL.getWritableDatabase();
-        db.execSQL("insert into notebook (name) values (?)",new String[]{name});
-        /*Cursor cursor=db.rawQuery("select * from notebook where name="+"英语",null);*/
-        /*cursor.moveToFirst();
-        int notebook_id=cursor.getInt(cursor.getColumnIndex("_id"));
-        db.execSQL("insert into subarea (name,notebook_id) values(?,?)",new Object[]{"新建分区",notebook_id});
-        cursor=db.rawQuery("select * from subarea where name=? and notebook_id=?",new String[]{"新建分区",notebook_id+""});
-        cursor.moveToFirst();
-        int subarea_id=cursor.getInt(cursor.getColumnIndex("_id"));
-        db.execSQL("insert into note (name,subarea_id) values(?,?)",new Object[]{"新建笔记",subarea_id});*/
+        db.execSQL("insert into subarea (name,notebook_id) values (?,?)",new Object[]{name,notebook_id});
     }
-
-    /*删操作*/
+    /*删*/
     private void deleteData(int _id){
         mySQL=new MySQL(getApplicationContext(),"mynote.db",null,1);
         db=mySQL.getWritableDatabase();
-        db.execSQL("delete from notebook where _id=?",new String[]{_id+""});
+        db.execSQL("delete from subarea where _id=?",new String[]{_id+""});
         refreshListview();
     }
     /*重命名*/
     private void reName(String name,int _id){
-         mySQL=new MySQL(getApplicationContext(),"mynote.db",null,1);
-         db=mySQL.getWritableDatabase();
-         db.execSQL("update notebook set name=? where _id=?",new String[]{name,_id+""});
+        mySQL=new MySQL(getApplicationContext(),"mynote.db",null,1);
+        db=mySQL.getWritableDatabase();
+        db.execSQL("update subarea set name=? where _id=?",new String[]{name,_id+""});
     }
 }
