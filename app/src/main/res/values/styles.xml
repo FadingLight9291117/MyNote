@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorButtonNormal">@color/colorButtonNormal</item>
         <!--<item name="android:textColor">@color/textColor</item>-->
-        <item name="android:fontFamily">serif </item>
+        <item name="android:fontFamily">serif</item>
         <!--指定toolbar弹出菜单样式-->
         <item name="actionOverflowMenuStyle">@style/toolbarMenuStyle</item>
 
@@ -41,4 +41,5 @@
         <!--文字颜色-->
         <!--<item name="android:textColor">@color/colorButtonNormal</item>-->
     </style>
+        <!--设置自定义toolbar左边间距为0-->
 </resources>

@@ -20,7 +20,7 @@
             android:drawablePadding="5dp"
             android:drawableTop="@mipmap/empty_tv"
             android:text="空空如也"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/color_gray_background"
             android:gravity="center"
             android:layout_gravity="center"
             android:textSize="20sp"

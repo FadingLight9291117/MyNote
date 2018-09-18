@@ -90,11 +90,18 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent=new Intent(MainActivity.this,SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
         if (id==R.id.action_refresh){
             recreate();
             return true;
+        }
+        if(id==R.id.action_search){
+            Intent intent=new Intent(MainActivity.this,SearchActivity.class);
+            startActivity(intent);
+            return  true;
         }
         return super.onOptionsItemSelected(item);
     }

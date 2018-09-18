@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import java.lang.reflect.Method;
 
+import ren.qinc.edit.PerformEdit;
+
 public class AddnoteActivity extends AppCompatActivity {
     private int _id;
     private int key;
@@ -28,6 +30,7 @@ public class AddnoteActivity extends AppCompatActivity {
     private TextView time;
     private EditText title;
     private EditText content;
+    private PerformEdit mPerformEdit;
     private MySQL mySQL;
     private SQLiteDatabase db;
     private MyTime time_create;
@@ -53,6 +56,7 @@ public class AddnoteActivity extends AppCompatActivity {
         time = findViewById(R.id.time);
         title = findViewById(R.id.title);
         content = findViewById(R.id.content);
+        mPerformEdit = new PerformEdit(content);
         mySQL = new MySQL(getApplicationContext(), "mynote.db", null, 1);
         db = mySQL.getWritableDatabase();
 
@@ -77,7 +81,11 @@ public class AddnoteActivity extends AppCompatActivity {
             title.setText(cursor.getString(cursor.getColumnIndex("title")));
             MyTime time_create=new MyTime(cursor.getString(cursor.getColumnIndex("time_create")));
             time.setText(time_create.getdateAndTimeNOSecond());
-            content.setText(cursor.getString(cursor.getColumnIndex("content")));
+            String string=cursor.getString(cursor.getColumnIndex("content"));
+            if(string==null){
+                string="";
+            }
+            mPerformEdit.setDefaultText(string);
         }
 
         title.addTextChangedListener(new TextWatcher() {
@@ -174,9 +182,11 @@ public class AddnoteActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_return) {
+            mPerformEdit.undo();
             return true;
         }
         if (id == R.id.action_return_2) {
+            mPerformEdit.redo();
             return true;
         }
         if(id==R.id.action_delete){

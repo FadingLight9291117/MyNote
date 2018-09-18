@@ -102,16 +102,24 @@ public class NoteActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         /*为toorbar返回箭头添加监听事件*/
+        /*前面必须加android.*/
         if (id == android.R.id.home) {
             finish();
             return true;
         }
         if (id == R.id.action_settings) {
+            Intent intent=new Intent(NoteActivity.this,SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
         if (id==R.id.action_refresh){
             recreate();
             return true;
+        }
+        if(id==R.id.action_search){
+            Intent intent=new Intent(NoteActivity.this,SearchActivity.class);
+            startActivity(intent);
+            return  true;
         }
         return super.onOptionsItemSelected(item);
     }

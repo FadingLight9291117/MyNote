@@ -105,16 +105,24 @@ public class SubareaActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         /*为toorbar返回箭头添加监听事件*/
+        /*前面必须加android.*/
         if (id == android.R.id.home) {
             finish();
             return true;
         }
         if (id == R.id.action_settings) {
+            Intent intent=new Intent(SubareaActivity.this,SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
         if (id==R.id.action_refresh){
             recreate();
             return true;
+        }
+        if(id==R.id.action_search){
+            Intent intent=new Intent(SubareaActivity.this,SearchActivity.class);
+            startActivity(intent);
+            return  true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -132,6 +140,7 @@ public class SubareaActivity extends AppCompatActivity {
         menu.setHeaderTitle(title);
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.menu_context,menu);
+        menu.findItem(R.id.menu_protect).setVisible(true);
     }
 
     @Override
